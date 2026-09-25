@@ -95,7 +95,10 @@ function jump(){
 
 function update(dt){
  invuln=Math.max(0,invuln-dt); if(!trampoline && score>=40){
-   trampoline={x:W/2-90,y:Math.max(120,player.y-190),w:180,h:26,bounce:0};
+   const base=platforms.find(p=>p.y<player.y-80 && p.y>40) || platforms[platforms.length-1];
+   if(base){
+     trampoline={x:base.x-10,y:base.y-34,w:Math.max(180,base.w+20),h:26,bounce:0,world:true};
+   }
  }
  if(trampoline){
    trampoline.bounce=Math.max(0,trampoline.bounce-dt*4);
