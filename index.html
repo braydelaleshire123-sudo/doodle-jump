@@ -56,21 +56,15 @@ function reset(){
 }
 
 function addPlatform(y){
- const difficulty=Math.min(score/1400,1);
- const w=Math.max(42,96-difficulty*48+Math.random()*10);
- const base=platforms.length?platforms[platforms.length-1]:null;
- let x;
- if(base){
-   const center=base.x+base.w/2;
-   const maxShift=140+difficulty*180;
-   const desired=center+(Math.random()-.5)*maxShift*2;
-   x=Math.max(4,Math.min(W-w-4,desired-w/2));
- }else{
-   x=(W-w)/2;
- }
- const moving=score>220 && Math.random()<(0.12+difficulty*0.28);
- if(score>180 && Math.random()<.22){ enemies.push({x:Math.random()*(W-34),y:y-34,w:34,h:28,vx:Math.random()<.5?-55:55}); }
- platforms.push({x,y,w,h:13,type:moving?'moving':'normal',vx:moving?(Math.random()<.5?-30:30):0});
+  const difficulty=Math.min(score/1400,1);
+  const w=Math.max(48,92-difficulty*32+Math.random()*10);
+  const prev=platforms.length?platforms[platforms.length-1]:null;
+  const maxDx=Math.min(95+difficulty*25,W-w-16);
+  const x=prev ? Math.max(8,Math.min(W-w-8,prev.x+(Math.random()*2-1)*maxDx)) : (W-w)/2;
+  const moving=score>350 && Math.random()<(0.10+difficulty*0.16);
+  const fragile=score>500 && Math.random()<(0.12+difficulty*0.28);
+  platforms.push({x,y,w,h:14,moving,vx:moving?(Math.random()<.5?-45:45):0,fragile,breakTimer:0});
+  if(score>180 && Math.random()<.18) enemies.push({x:Math.random()*(W-34),y:y-34,w:34,h:28,vx:Math.random()<.5?-55:55});
 }
 
 function startGame(){
