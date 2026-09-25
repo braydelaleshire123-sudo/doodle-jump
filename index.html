@@ -106,7 +106,19 @@ function update(dt){
  const oldBottom=player.y+player.h;
  player.vy+=1850*dt; player.y+=player.vy*dt;
 
- if(portal && portal.y>-150 && portal.y<H+220){ctx.save();ctx.translate(portal.x+portal.w/2,portal.y+portal.h/2);ctx.scale(1+Math.sin(performance.now()/180)*.08,1+Math.sin(performance.now()/180)*.08);ctx.fillStyle='#7b2cff';ctx.shadowBlur=28;ctx.shadowColor='#b86cff';ctx.beginPath();ctx.ellipse(0,0,portal.w/2,portal.h/2,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#0b0620';ctx.beginPath();ctx.ellipse(0,0,portal.w/2-10,portal.h/2-10,0,0,Math.PI*2);ctx.fill();ctx.restore();ctx.fillStyle='#fff';ctx.font='900 18px Arial';ctx.textAlign='center';ctx.fillText('PORTAL → 1000m',portal.x+portal.w/2,portal.y-12);} for(const e of enemies){
+  if(portal){
+    ctx.save();
+    ctx.translate(portal.x+portal.w/2,portal.y+portal.h/2);
+    ctx.scale(1+Math.sin(performance.now()/180)*.08,1+Math.sin(performance.now()/180)*.08);
+    ctx.fillStyle='#7b2cff';ctx.shadowBlur=28;ctx.shadowColor='#b86cff';
+    ctx.beginPath();ctx.ellipse(0,0,portal.w/2,portal.h/2,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#0b0620';ctx.shadowBlur=0;
+    ctx.beginPath();ctx.ellipse(0,0,portal.w/2-10,portal.h/2-10,0,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+    ctx.fillStyle='#fff';ctx.font='900 18px Arial';ctx.textAlign='center';
+    ctx.fillText('PORTAL → 1000m',portal.x+portal.w/2,portal.y-12);
+  }
+ for(const e of enemies){
  e.x+=e.vx*dt;
  if(e.x<0){e.x=0;e.vx=Math.abs(e.vx);}
  if(e.x+e.w>W){e.x=W-e.w;e.vx=-Math.abs(e.vx);}
