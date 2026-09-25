@@ -94,7 +94,7 @@ function jump(){
 }
 
 function update(dt){
- invuln=Math.max(0,invuln-dt); if(!portal && !portalSpawned && score>=50){ portal={x:W/2-55,y:H*.22,w:110,h:150}; portalSpawned=true; } if(portal){ if(player.x+player.w>portal.x && player.x<portal.x+portal.w && player.y+player.h>portal.y && player.y<portal.y+portal.h){ score=1000; cameraY=0; player.x=W/2-player.w/2; player.y=H-170; player.vy=-420; portal=null; portalSpawned=true; platforms=[]; let top=H+20; for(let i=0;i<120;i++){top-=58+Math.random()*24; addPlatform(top);} } }
+ invuln=Math.max(0,invuln-dt); if(!portal && !portalSpawned && score>=50){ const py=Math.max(90,player.y-120); portal={x:W/2-55,y:py,w:110,h:150}; portalSpawned=true; } if(portal){ if(player.x+player.w>portal.x && player.x<portal.x+portal.w && player.y+player.h>portal.y && player.y<portal.y+portal.h){ score=1000; cameraY=0; player.x=W/2-player.w/2; player.y=H-170; player.vy=-420; portal=null; portalSpawned=true; platforms=[]; let top=H+20; for(let i=0;i<120;i++){top-=58+Math.random()*24; addPlatform(top);} } }
  const accel=1700,maxSpeed=310;
  if(keys.left)player.vx-=accel*dt;
  if(keys.right)player.vx+=accel*dt;
@@ -141,6 +141,7 @@ for(const p of platforms){ if(p.fragile && p.breakTimer>0){ p.breakTimer+=dt; if
    const shift=target-player.y;player.y=target;
    cameraY+=shift;score+=shift*.055;
    for(const p of platforms)p.y+=shift;
+   if(portal)portal.y+=shift;
    for(const e of enemies)e.y+=shift;
    for(const q of particles)q.y+=shift;
  }
