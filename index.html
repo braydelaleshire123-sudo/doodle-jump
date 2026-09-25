@@ -56,19 +56,19 @@ function reset(){
 }
 
 function addPlatform(y){
- const difficulty=Math.min(score/2500,1);
- const w=Math.max(48,100-difficulty*48+Math.random()*12);
+ const difficulty=Math.min(score/1400,1);
+ const w=Math.max(34,96-difficulty*58+Math.random()*10);
  const base=platforms.length?platforms[platforms.length-1]:null;
  let x;
  if(base){
    const center=base.x+base.w/2;
-   const maxShift=95+difficulty*85;
+   const maxShift=90+difficulty*125;
    const desired=center+(Math.random()-.5)*maxShift*2;
    x=Math.max(4,Math.min(W-w-4,desired-w/2));
  }else{
    x=(W-w)/2;
  }
- const moving=score>350 && Math.random()<(0.10+difficulty*0.14);
+ const moving=score>220 && Math.random()<(0.12+difficulty*0.28);
  if(score>180 && Math.random()<.22){ enemies.push({x:Math.random()*(W-34),y:y-34,w:34,h:28,vx:Math.random()<.5?-55:55}); }
  platforms.push({x,y,w,h:13,type:moving?'moving':'normal',vx:moving?(Math.random()<.5?-30:30):0});
 }
@@ -141,7 +141,7 @@ for(const p of platforms){ if(p.fragile && p.breakTimer>0){ p.breakTimer+=dt; if
  while(platforms.length && platforms[0].y>H+120)platforms.shift();
  while(enemies.length && enemies[0].y>H+180)enemies.shift();
  let top=Math.min(...platforms.map(p=>p.y));
- while(top>-180){const gap=64+difficulty*38+Math.random()*(22+difficulty*18);top-=gap;addPlatform(top);}
+ while(top>-180){const gap=62+difficulty*58+Math.random()*(20+difficulty*28);top-=gap;addPlatform(top);}
  for(let i=particles.length-1;i>=0;i--){const q=particles[i];q.x+=q.vx*dt;q.y+=q.vy*dt;q.vy+=300*dt;q.life-=dt;if(q.life<=0)particles.splice(i,1);}
  if(player.hitFlash>0)player.hitFlash-=dt;
  if(player.y>H+90)gameOver();
