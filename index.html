@@ -94,7 +94,7 @@ function jump(){
 }
 
 function update(dt){
- invuln=Math.max(0,invuln-dt); if(!portal && !portalSpawned && score>=50){ portal={x:W/2-32,y:Math.max(70,player.y-110),w:64,h:92}; portalSpawned=true; } if(portal){ if(player.x+player.w>portal.x && player.x<portal.x+portal.w && player.y+player.h>portal.y && player.y<portal.y+portal.h){ score=1000; cameraY=-1000; player.x=W/2-player.w/2; player.y=H-150; portal=null; platforms=[]; let top=H+40; for(let i=0;i<90;i++){top-=58+Math.random()*24; addPlatform(top);} } }
+ invuln=Math.max(0,invuln-dt); if(!portal && !portalSpawned && score>=45){ portal={x:W/2-38,y:120,w:76,h:110}; portalSpawned=true; } if(portal){ if(player.x+player.w>portal.x && player.x<portal.x+portal.w && player.y+player.h>portal.y && player.y<portal.y+portal.h){ score=1000; cameraY=0; player.x=W/2-player.w/2; player.y=H-170; player.vy=-420; portal=null; portalSpawned=true; platforms=[]; let top=H+20; for(let i=0;i<120;i++){top-=58+Math.random()*24; addPlatform(top);} } }
  const accel=1700,maxSpeed=310;
  if(keys.left)player.vx-=accel*dt;
  if(keys.right)player.vx+=accel*dt;
