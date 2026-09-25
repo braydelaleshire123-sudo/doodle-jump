@@ -39,7 +39,7 @@ const scoreEl=document.getElementById('score'),bestEl=document.getElementById('b
 const overlay=document.getElementById('overlay'),title=document.getElementById('title'),message=document.getElementById('message'),startBtn=document.getElementById('start');
 
 let W=0,H=0,dpr=1,raf=0,last=0,running=false,score=0,best=Number(localStorage.doodleBest||0);
-let player,platforms,enemies,cameraY,keys={left:false,right:false},particles=[],invuln=0,portal=null,portalSpawned=false,trampoline=null,trampolineSpawned=false;
+let player,platforms,enemies,cameraY,keys={left:false,right:false},particles=[],invuln=0,trampoline=null,trampolineSpawned=false;
 
 function resize(){
  dpr=Math.min(devicePixelRatio||1,2); W=canvas.clientWidth; H=canvas.clientHeight;
@@ -94,17 +94,15 @@ function jump(){
 }
 
 function update(dt){
- invuln=Math.max(0,invuln-dt); if(!trampoline && !trampolineSpawned && score>=50){
-   trampoline={x:W/2-70,y:H*.62,w:140,h:24,bounce:0};
-   trampolineSpawned=true;
+ invuln=Math.max(0,invuln-dt); if(!trampoline && score>=50){
+   const targetY=player.y-170;
+   trampoline={x:W/2-70,y:targetY,w:140,h:24,bounce:0};
  }
  if(trampoline){
-   trampoline.x=W/2-70;
-   trampoline.y=H*.62;
    trampoline.bounce=Math.max(0,trampoline.bounce-dt*4);
    if(player.vy>0 && player.y+player.h>=trampoline.y &&
-      player.y+player.h<=trampoline.y+30 && player.x+player.w>trampoline.x &&
-      player.x<trampoline.x+trampoline.w){
+      player.y+player.h<=trampoline.y+32 &&
+      player.x+player.w>trampoline.x && player.x<trampoline.x+trampoline.w){
      player.y=trampoline.y-player.h;
      player.vy=-1150;
      trampoline.bounce=1;
@@ -121,22 +119,6 @@ function update(dt){
  const oldBottom=player.y+player.h;
  player.vy+=1850*dt; player.y+=player.vy*dt;
 
-  if(trampoline){
-    const ty=trampoline.y+trampoline.bounce*12;
-    ctx.save();
-    ctx.fillStyle='#ff4b4b';
-    ctx.fillRect(trampoline.x,ty,trampoline.w,12);
-    ctx.fillStyle='#ffd84d';
-    ctx.fillRect(trampoline.x+8,ty+12,trampoline.w-16,7);
-    ctx.strokeStyle='#333'; ctx.lineWidth=5;
-    ctx.beginPath();
-    ctx.moveTo(trampoline.x+18,ty+19); ctx.lineTo(trampoline.x+35,ty+45);
-    ctx.moveTo(trampoline.x+trampoline.w-18,ty+19); ctx.lineTo(trampoline.x+trampoline.w-35,ty+45);
-    ctx.stroke();
-    ctx.fillStyle='#17324d'; ctx.font='900 18px Arial'; ctx.textAlign='center';
-    ctx.fillText('TRAMPOLINE',trampoline.x+trampoline.w/2,ty-12);
-    ctx.restore();
-  }
  for(const e of enemies){
  e.x+=e.vx*dt;
  if(e.x<0){e.x=0;e.vx=Math.abs(e.vx);}
@@ -193,6 +175,22 @@ function draw(){
    ctx.fillStyle=p.type==='moving'?'#ff9f43':'#55b95b';
    if(p.fragile && p.breakTimer>0){ctx.save();ctx.translate(p.x+p.w/2,p.y+p.h/2);ctx.rotate(Math.sin(p.breakTimer*55)*.06);ctx.globalAlpha=Math.max(0,1-p.breakTimer/0.28);ctx.translate(-(p.x+p.w/2),-(p.y+p.h/2));} ctx.fillRect(p.x,p.y,p.w,p.h); if(p.fragile && p.breakTimer>0){ctx.globalAlpha=1;ctx.restore();}
    ctx.fillStyle=p.type==='moving'?'#ffd166':'#8be28d';ctx.fillRect(p.x,p.y,p.w,4);
+ }
+ if(trampoline){
+   const ty=trampoline.y+trampoline.bounce*12;
+   if(ty>-80 && ty<H+80){
+     ctx.save();
+     ctx.fillStyle='#ff3b30'; ctx.fillRect(trampoline.x,ty,trampoline.w,12);
+     ctx.fillStyle='#ffd43b'; ctx.fillRect(trampoline.x+8,ty+12,trampoline.w-16,7);
+     ctx.strokeStyle='#333'; ctx.lineWidth=5;
+     ctx.beginPath();
+     ctx.moveTo(trampoline.x+18,ty+19);ctx.lineTo(trampoline.x+38,ty+48);
+     ctx.moveTo(trampoline.x+trampoline.w-18,ty+19);ctx.lineTo(trampoline.x+trampoline.w-38,ty+48);
+     ctx.stroke();
+     ctx.fillStyle='#17324d';ctx.font='900 18px Arial';ctx.textAlign='center';
+     ctx.fillText('TRAMPOLINE',trampoline.x+trampoline.w/2,ty-10);
+     ctx.restore();
+   }
  }
  for(const q of particles){ctx.globalAlpha=Math.max(0,q.life/.35);ctx.fillStyle='#fff';ctx.fillRect(q.x,q.y,5,5);ctx.globalAlpha=1;}
  if(player){
