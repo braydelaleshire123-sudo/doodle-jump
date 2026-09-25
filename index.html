@@ -52,15 +52,24 @@ function reset(){
  player={x:W/2-17,y:H-130,w:34,h:42,vx:0,vy:0};
  platforms=[{x:W/2-55,y:H-70,w:110,h:14,type:'normal',vx:0}];
  let y=H-145;
- while(y>-700){addPlatform(y);y-=70+Math.random()*48;}
+ while(y>-700){addPlatform(y);y-=64+Math.random()*20;}
 }
 
 function addPlatform(y){
- const difficulty=Math.min(score/900,1);
- const w=Math.max(58,94-difficulty*22+Math.random()*18);
- const x=Math.random()*(W-w);
- const moving=score>220 && Math.random()<.18;
- platforms.push({x,y,w,h:13,type:moving?'moving':'normal',vx:moving?(Math.random()<.5?-35:35):0});
+ const difficulty=Math.min(score/1400,1);
+ const w=Math.max(68,98-difficulty*14+Math.random()*14);
+ const base=platforms.length?platforms[platforms.length-1]:null;
+ let x;
+ if(base){
+   const center=base.x+base.w/2;
+   const maxShift=105+difficulty*20;
+   const desired=center+(Math.random()-.5)*maxShift*2;
+   x=Math.max(4,Math.min(W-w-4,desired-w/2));
+ }else{
+   x=(W-w)/2;
+ }
+ const moving=score>450 && Math.random()<.12;
+ platforms.push({x,y,w,h:13,type:moving?'moving':'normal',vx:moving?(Math.random()<.5?-30:30):0});
 }
 
 function startGame(){
@@ -116,7 +125,7 @@ function update(dt){
  }
  while(platforms.length && platforms[0].y>H+120)platforms.shift();
  let top=Math.min(...platforms.map(p=>p.y));
- while(top>-180){top-=68+Math.random()*48;addPlatform(top);}
+ while(top>-180){top-=64+Math.random()*20;addPlatform(top);}
  for(let i=particles.length-1;i>=0;i--){const q=particles[i];q.x+=q.vx*dt;q.y+=q.vy*dt;q.vy+=300*dt;q.life-=dt;if(q.life<=0)particles.splice(i,1);}
  if(player.y>H+90)gameOver();
  scoreEl.textContent=Math.floor(score)+' m';
