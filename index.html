@@ -124,7 +124,7 @@ function update(dt){
    player.hitFlash=0.18;
  }
 }
-for(const p of platforms){
+for(const p of platforms){ if(p.fragile && p.breakTimer>0){ p.breakTimer+=dt; if(p.breakTimer>.28){p.y=9999;} }
    if(p.type==='moving'){p.x+=p.vx*dt;if(p.x<0||p.x+p.w>W)p.vx*=-1;}
    if(player.vy>0 && oldBottom<=p.y && player.y+player.h>=p.y &&
       player.x+player.w>p.x && player.x<p.x+p.w){player.y=p.y-player.h;jump();}
@@ -165,7 +165,7 @@ function draw(){
  }
  for(const p of platforms){
    ctx.fillStyle=p.type==='moving'?'#ff9f43':'#55b95b';
-   ctx.fillRect(p.x,p.y,p.w,p.h);
+   if(p.fragile && p.breakTimer>0){ctx.save();ctx.translate(p.x+p.w/2,p.y+p.h/2);ctx.rotate(Math.sin(p.breakTimer*55)*.06);ctx.globalAlpha=Math.max(0,1-p.breakTimer/0.28);ctx.translate(-(p.x+p.w/2),-(p.y+p.h/2));} ctx.fillRect(p.x,p.y,p.w,p.h); if(p.fragile && p.breakTimer>0){ctx.globalAlpha=1;ctx.restore();}
    ctx.fillStyle=p.type==='moving'?'#ffd166':'#8be28d';ctx.fillRect(p.x,p.y,p.w,4);
  }
  for(const q of particles){ctx.globalAlpha=Math.max(0,q.life/.35);ctx.fillStyle='#fff';ctx.fillRect(q.x,q.y,5,5);ctx.globalAlpha=1;}
