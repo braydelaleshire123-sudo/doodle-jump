@@ -108,7 +108,7 @@ function update(dt){
       player.y+player.h<=top+30 &&
       player.x+player.w>trampoline.x && player.x<trampoline.x+trampoline.w){
      player.y=top-player.h;
-     player.vy=-1750;
+     player.vy=-3000;
      trampoline.bounce=1;
    }
  }
@@ -191,8 +191,6 @@ function draw(){
      ctx.moveTo(trampoline.x+22,ty+22);ctx.lineTo(trampoline.x+48,ty+56);
      ctx.moveTo(trampoline.x+trampoline.w-22,ty+22);ctx.lineTo(trampoline.x+trampoline.w-48,ty+56);
      ctx.stroke();
-     ctx.fillStyle='#17324d';ctx.font='900 20px Arial';ctx.textAlign='center';
-     ctx.fillText('TRAMPOLINE',trampoline.x+trampoline.w/2,ty-12);
      ctx.restore();
    }
  }
