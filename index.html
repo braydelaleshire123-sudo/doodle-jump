@@ -133,9 +133,9 @@ for(const p of platforms){ if(p.fragile && p.breakTimer>0){ p.breakTimer+=dt; if
    for(const q of particles)q.y+=shift;
  }
  while(platforms.length && platforms[0].y>H+120)platforms.shift();
- while(enemies.length && enemies[0].y>H+180)enemies.shift();
+ enemies=enemies.filter(e=>e.y<=H+180);
  let top=Math.min(...platforms.map(p=>p.y));
- while(top>-180){const gap=54+difficulty*18+Math.random()*(14+difficulty*12);top-=gap;addPlatform(top);}
+ let guard=0; while(top>-180 && guard++<80){const difficulty=Math.min(score/1400,1); const gap=54+difficulty*18+Math.random()*(14+difficulty*12); top-=gap; addPlatform(top);}
  for(let i=particles.length-1;i>=0;i--){const q=particles[i];q.x+=q.vx*dt;q.y+=q.vy*dt;q.vy+=300*dt;q.life-=dt;if(q.life<=0)particles.splice(i,1);}
  if(player.hitFlash>0)player.hitFlash-=dt;
  if(player.y>H+90)gameOver();
