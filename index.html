@@ -61,10 +61,10 @@ function addPlatform(y){
   const prev=platforms.length?platforms[platforms.length-1]:null;
   const maxDx=Math.min(95+difficulty*25,W-w-16);
   const x=prev ? Math.max(8,Math.min(W-w-8,prev.x+(Math.random()*2-1)*maxDx)) : (W-w)/2;
-  const moving=score>350 && Math.random()<(0.10+difficulty*0.16);
-  const fragile=score>500 && Math.random()<(0.12+difficulty*0.28);
+  const moving=score>1200 && Math.random()<(0.06+difficulty*0.10);
+  const fragile=score>1600 && Math.random()<(0.08+difficulty*0.18);
   platforms.push({x,y,w,h:14,moving,vx:moving?(Math.random()<.5?-45:45):0,fragile,breakTimer:0});
-  if(score>180 && Math.random()<.18) enemies.push({x:Math.random()*(W-34),y:y-34,w:34,h:28,vx:Math.random()<.5?-55:55});
+  if(score>500 && Math.random()<.14) enemies.push({x:Math.random()*(W-34),y:y-34,w:34,h:28,vx:Math.random()<.5?-55:55});
 }
 
 function startGame(){
@@ -118,7 +118,7 @@ function update(dt){
    player.hitFlash=0.18;
  }
 }
-for(const p of platforms){ if(p.fragile && p.breakTimer>0){ p.breakTimer+=dt; if(p.breakTimer>.28){p.y=9999;} }
+for(const p of platforms){ if(p.fragile && p.breakTimer>0){ p.breakTimer+=dt; if(p.breakTimer>.28){p.y=H+500;} }
    if(p.type==='moving'){p.x+=p.vx*dt;if(p.x<0||p.x+p.w>W)p.vx*=-1;}
    if(player.vy>0 && oldBottom<=p.y && player.y+player.h>=p.y &&
       player.x+player.w>p.x && player.x<p.x+p.w){player.y=p.y-player.h;jump();}
