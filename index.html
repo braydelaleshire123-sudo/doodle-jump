@@ -48,7 +48,7 @@ function resize(){
 addEventListener('resize',resize);resize();bestEl.textContent='Best: '+best+' m';
 
 function reset(){
- score=0;cameraY=0;particles=[];enemies=[];invuln=0;portal=null;
+ score=0;cameraY=0;particles=[];enemies=[];invuln=0;portal=null;portalSpawned=false;
  player={x:W/2-17,y:H-130,w:34,h:42,vx:0,vy:0};
  platforms=[{x:W/2-55,y:H-70,w:110,h:14,type:'normal',vx:0}];
  let y=H-145;
@@ -94,7 +94,7 @@ function jump(){
 }
 
 function update(dt){
- invuln=Math.max(0,invuln-dt); if(!portal && score>=48){ portal={x:W/2-28,y:player.y-90,w:56,h:76}; } if(portal){ portal.y+=cameraY>0?0:0; if(player.x+player.w>portal.x && player.x<portal.x+portal.w && player.y+player.h>portal.y && player.y<portal.y+portal.h){ score=1000; cameraY=-1000; player.x=W/2-player.w/2; player.y=H-150; portal=null; platforms=[]; let top=H+40; for(let i=0;i<90;i++){top-=58+Math.random()*24; addPlatform(top);} } }
+ invuln=Math.max(0,invuln-dt); if(!portal && !portalSpawned && score>=50){ portal={x:W/2-32,y:Math.max(70,player.y-110),w:64,h:92}; portalSpawned=true; } if(portal){ if(player.x+player.w>portal.x && player.x<portal.x+portal.w && player.y+player.h>portal.y && player.y<portal.y+portal.h){ score=1000; cameraY=-1000; player.x=W/2-player.w/2; player.y=H-150; portal=null; platforms=[]; let top=H+40; for(let i=0;i<90;i++){top-=58+Math.random()*24; addPlatform(top);} } }
  const accel=1700,maxSpeed=310;
  if(keys.left)player.vx-=accel*dt;
  if(keys.right)player.vx+=accel*dt;
@@ -106,7 +106,7 @@ function update(dt){
  const oldBottom=player.y+player.h;
  player.vy+=1850*dt; player.y+=player.vy*dt;
 
- if(portal && portal.y>-100 && portal.y<H+100){ctx.save();ctx.fillStyle='#9b5cff';ctx.shadowBlur=20;ctx.shadowColor='#9b5cff';ctx.fillRect(portal.x,portal.y,portal.w,portal.h);ctx.fillStyle='#fff';ctx.fillRect(portal.x+10,portal.y+10,portal.w-20,portal.h-20);ctx.restore();} for(const e of enemies){
+ if(portal && portal.y>-150 && portal.y<H+150){ctx.save();ctx.translate(portal.x+portal.w/2,portal.y+portal.h/2);ctx.scale(1+Math.sin(performance.now()/180)*.08,1+Math.sin(performance.now()/180)*.08);ctx.fillStyle='#7b2cff';ctx.shadowBlur=28;ctx.shadowColor='#b86cff';ctx.beginPath();ctx.ellipse(0,0,portal.w/2,portal.h/2,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#0b0620';ctx.beginPath();ctx.ellipse(0,0,portal.w/2-10,portal.h/2-10,0,0,Math.PI*2);ctx.fill();ctx.restore();} for(const e of enemies){
  e.x+=e.vx*dt;
  if(e.x<0){e.x=0;e.vx=Math.abs(e.vx);}
  if(e.x+e.w>W){e.x=W-e.w;e.vx=-Math.abs(e.vx);}
