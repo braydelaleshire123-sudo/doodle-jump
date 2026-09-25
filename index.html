@@ -39,7 +39,7 @@ const scoreEl=document.getElementById('score'),bestEl=document.getElementById('b
 const overlay=document.getElementById('overlay'),title=document.getElementById('title'),message=document.getElementById('message'),startBtn=document.getElementById('start');
 
 let W=0,H=0,dpr=1,raf=0,last=0,running=false,score=0,best=Number(localStorage.doodleBest||0);
-let player,platforms,enemies,cameraY,keys={left:false,right:false},particles=[],invuln=0;
+let player,platforms,enemies,cameraY,keys={left:false,right:false},particles=[],invuln=0,portal=null,portalSpawned=false;
 
 function resize(){
  dpr=Math.min(devicePixelRatio||1,2); W=canvas.clientWidth; H=canvas.clientHeight;
@@ -94,7 +94,7 @@ function jump(){
 }
 
 function update(dt){
- invuln=Math.max(0,invuln-dt); if(!portal && !portalSpawned && score>=45){ portal={x:W/2-38,y:120,w:76,h:110}; portalSpawned=true; } if(portal){ if(player.x+player.w>portal.x && player.x<portal.x+portal.w && player.y+player.h>portal.y && player.y<portal.y+portal.h){ score=1000; cameraY=0; player.x=W/2-player.w/2; player.y=H-170; player.vy=-420; portal=null; portalSpawned=true; platforms=[]; let top=H+20; for(let i=0;i<120;i++){top-=58+Math.random()*24; addPlatform(top);} } }
+ invuln=Math.max(0,invuln-dt); if(!portal && !portalSpawned && score>=50){ portal={x:W/2-55,y:H*.22,w:110,h:150}; portalSpawned=true; } if(portal){ if(player.x+player.w>portal.x && player.x<portal.x+portal.w && player.y+player.h>portal.y && player.y<portal.y+portal.h){ score=1000; cameraY=0; player.x=W/2-player.w/2; player.y=H-170; player.vy=-420; portal=null; portalSpawned=true; platforms=[]; let top=H+20; for(let i=0;i<120;i++){top-=58+Math.random()*24; addPlatform(top);} } }
  const accel=1700,maxSpeed=310;
  if(keys.left)player.vx-=accel*dt;
  if(keys.right)player.vx+=accel*dt;
@@ -106,7 +106,7 @@ function update(dt){
  const oldBottom=player.y+player.h;
  player.vy+=1850*dt; player.y+=player.vy*dt;
 
- if(portal && portal.y>-150 && portal.y<H+150){ctx.save();ctx.translate(portal.x+portal.w/2,portal.y+portal.h/2);ctx.scale(1+Math.sin(performance.now()/180)*.08,1+Math.sin(performance.now()/180)*.08);ctx.fillStyle='#7b2cff';ctx.shadowBlur=28;ctx.shadowColor='#b86cff';ctx.beginPath();ctx.ellipse(0,0,portal.w/2,portal.h/2,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#0b0620';ctx.beginPath();ctx.ellipse(0,0,portal.w/2-10,portal.h/2-10,0,0,Math.PI*2);ctx.fill();ctx.restore();} for(const e of enemies){
+ if(portal && portal.y>-150 && portal.y<H+220){ctx.save();ctx.translate(portal.x+portal.w/2,portal.y+portal.h/2);ctx.scale(1+Math.sin(performance.now()/180)*.08,1+Math.sin(performance.now()/180)*.08);ctx.fillStyle='#7b2cff';ctx.shadowBlur=28;ctx.shadowColor='#b86cff';ctx.beginPath();ctx.ellipse(0,0,portal.w/2,portal.h/2,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#0b0620';ctx.beginPath();ctx.ellipse(0,0,portal.w/2-10,portal.h/2-10,0,0,Math.PI*2);ctx.fill();ctx.restore();ctx.fillStyle='#fff';ctx.font='900 18px Arial';ctx.textAlign='center';ctx.fillText('PORTAL → 1000m',portal.x+portal.w/2,portal.y-12);} for(const e of enemies){
  e.x+=e.vx*dt;
  if(e.x<0){e.x=0;e.vx=Math.abs(e.vx);}
  if(e.x+e.w>W){e.x=W-e.w;e.vx=-Math.abs(e.vx);}
