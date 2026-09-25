@@ -39,7 +39,7 @@ const scoreEl=document.getElementById('score'),bestEl=document.getElementById('b
 const overlay=document.getElementById('overlay'),title=document.getElementById('title'),message=document.getElementById('message'),startBtn=document.getElementById('start');
 
 let W=0,H=0,dpr=1,raf=0,last=0,running=false,score=0,best=Number(localStorage.doodleBest||0);
-let player,platforms,enemies,cameraY,keys={left:false,right:false},particles=[],invuln=0,portal=null,portalSpawned=false;
+let player,platforms,enemies,cameraY,keys={left:false,right:false},particles=[],invuln=0,portal=null,portalSpawned=false,trampoline=null,trampolineSpawned=false;
 
 function resize(){
  dpr=Math.min(devicePixelRatio||1,2); W=canvas.clientWidth; H=canvas.clientHeight;
@@ -94,19 +94,20 @@ function jump(){
 }
 
 function update(dt){
- invuln=Math.max(0,invuln-dt); if(!portal && !portalSpawned && score>=50){
-   portal={x:W/2-75,y:H*.18,w:150,h:210};
-   portalSpawned=true;
+ invuln=Math.max(0,invuln-dt); if(!trampoline && !trampolineSpawned && score>=50){
+   trampoline={x:W/2-70,y:H*.62,w:140,h:24,bounce:0};
+   trampolineSpawned=true;
  }
- if(portal){
-   portal.x=W/2-75; portal.y=H*.18;
-   if(player.x+player.w>portal.x && player.x<portal.x+portal.w &&
-      player.y+player.h>portal.y && player.y<portal.y+portal.h){
-     score=1000; cameraY=0;
-     player.x=W/2-player.w/2; player.y=H-170; player.vy=-420;
-     portal=null; platforms=[];
-     let top=H+20;
-     for(let i=0;i<120;i++){top-=58+Math.random()*24; addPlatform(top);}
+ if(trampoline){
+   trampoline.x=W/2-70;
+   trampoline.y=H*.62;
+   trampoline.bounce=Math.max(0,trampoline.bounce-dt*4);
+   if(player.vy>0 && player.y+player.h>=trampoline.y &&
+      player.y+player.h<=trampoline.y+30 && player.x+player.w>trampoline.x &&
+      player.x<trampoline.x+trampoline.w){
+     player.y=trampoline.y-player.h;
+     player.vy=-1150;
+     trampoline.bounce=1;
    }
  }
  const accel=1700,maxSpeed=310;
@@ -120,17 +121,21 @@ function update(dt){
  const oldBottom=player.y+player.h;
  player.vy+=1850*dt; player.y+=player.vy*dt;
 
-  if(portal){
+  if(trampoline){
+    const ty=trampoline.y+trampoline.bounce*12;
     ctx.save();
-    ctx.translate(portal.x+portal.w/2,portal.y+portal.h/2);
-    ctx.scale(1+Math.sin(performance.now()/180)*.08,1+Math.sin(performance.now()/180)*.08);
-    ctx.fillStyle='#7b2cff';ctx.shadowBlur=28;ctx.shadowColor='#b86cff';
-    ctx.beginPath();ctx.ellipse(0,0,portal.w/2,portal.h/2,0,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='#0b0620';ctx.shadowBlur=0;
-    ctx.beginPath();ctx.ellipse(0,0,portal.w/2-10,portal.h/2-10,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#ff4b4b';
+    ctx.fillRect(trampoline.x,ty,trampoline.w,12);
+    ctx.fillStyle='#ffd84d';
+    ctx.fillRect(trampoline.x+8,ty+12,trampoline.w-16,7);
+    ctx.strokeStyle='#333'; ctx.lineWidth=5;
+    ctx.beginPath();
+    ctx.moveTo(trampoline.x+18,ty+19); ctx.lineTo(trampoline.x+35,ty+45);
+    ctx.moveTo(trampoline.x+trampoline.w-18,ty+19); ctx.lineTo(trampoline.x+trampoline.w-35,ty+45);
+    ctx.stroke();
+    ctx.fillStyle='#17324d'; ctx.font='900 18px Arial'; ctx.textAlign='center';
+    ctx.fillText('TRAMPOLINE',trampoline.x+trampoline.w/2,ty-12);
     ctx.restore();
-    ctx.fillStyle='#fff';ctx.font='900 18px Arial';ctx.textAlign='center';
-    ctx.fillText('PORTAL → 1000m',portal.x+portal.w/2,portal.y-12);
   }
  for(const e of enemies){
  e.x+=e.vx*dt;
@@ -166,7 +171,7 @@ for(const p of platforms){ if(p.fragile && p.breakTimer>0){ p.breakTimer+=dt; if
  for(let i=particles.length-1;i>=0;i--){const q=particles[i];q.x+=q.vx*dt;q.y+=q.vy*dt;q.vy+=300*dt;q.life-=dt;if(q.life<=0)particles.splice(i,1);}
  if(player.hitFlash>0)player.hitFlash-=dt;
  if(player.y>H+90)gameOver();
- scoreEl.textContent=Math.floor(score)+' m'; if(portal) scoreEl.textContent=Math.floor(score)+' m • PORTAL READY';
+ scoreEl.textContent=Math.floor(score)+' m'; 
 }
 
 function cloud(x,y,s){
